@@ -86,7 +86,7 @@ const Messages = ({ fileId }: MessagesProps) => {
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-2">
           <MessageSquare className="h-8 w-8 text-violet-500" />
-          <h3 className="font-semibold text-xl">You&spod;re all set</h3>
+          <h3 className="font-semibold text-xl">You&apos;re all set</h3>
           <p className="text-slate-500 text-sm">
             ask your first question to get started
           </p>
