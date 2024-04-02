@@ -12,7 +12,6 @@ const Page = () => {
     retry: true,
     retryDelay: 500,
   });
-
   // Check for errors in the query result
   if (query.error) {
     const errData = query.error.data;
