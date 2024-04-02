@@ -22,7 +22,7 @@ export default function Home() {
           simply upload your file and start asking questions right away.
         </p>
         <Link
-          href="/dashboard"
+          href="/sign-up"
           target="_blank"
           className={buttonVariants({ size: "lg", className: "mt-5" })}
         >
