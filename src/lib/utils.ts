@@ -45,7 +45,7 @@ export function constructMetadata({
       creator: "@codewithzi",
     },
     icons,
-    metadataBase: new URL("https://chats-with-pdf.vercel.app/"),
+    metadataBase: new URL("https://chatswithpdf.com/"),
     themeColor: "#FFF",
     ...(noIndex && {
       robots: {

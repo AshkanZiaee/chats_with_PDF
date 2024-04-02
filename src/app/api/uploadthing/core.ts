@@ -13,12 +13,11 @@ const f = createUploadthing();
 
 const middleware = async () => {
   const { getUser } = getKindeServerSession();
-  const user = getUser();
-  // @ts-ignore
+  const user = await getUser();
+
   if (!user || !user.id) throw new Error("Unauthorized");
 
   const subscriptionPlan = await getUserSubscriptionPlan();
-  // @ts-ignore
 
   return { subscriptionPlan, userId: user.id };
 };
@@ -47,15 +46,13 @@ const onUploadComplete = async ({
       key: file.key,
       name: file.name,
       userId: metadata.userId,
-      url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+      url: `https://utfs.io/f/${file.key}`,
       uploadStatus: "PROCESSING",
     },
   });
 
   try {
-    const response = await fetch(
-      `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
-    );
+    const response = await fetch(`https://utfs.io/f/${file.key}`);
 
     const blob = await response.blob();
 
@@ -86,7 +83,7 @@ const onUploadComplete = async ({
 
     // vectorize and index entire document
     const pinecone = await getPineconeClient();
-    const pineconeIndex = pinecone.Index("quill");
+    const pineconeIndex = pinecone.Index("chatswithpdf");
 
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,

@@ -44,7 +44,6 @@ export const POST = async (req: NextRequest) => {
   const embeddings = new OpenAIEmbeddings({
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
-
   const pinecone = await getPineconeClient();
   const pineconeIndex = pinecone.Index("chatswithpdf");
 
