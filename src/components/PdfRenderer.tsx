@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@/lib/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   ChevronDown,
   ChevronUp,
@@ -9,49 +9,49 @@ import {
   RotateCcw,
   RotateCw,
   Search,
-} from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
-import { useResizeDetector } from "react-resize-detector";
-import { z } from "zod";
-import { Button } from "./ui/button";
+} from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { Document, Page, pdfjs } from "react-pdf"
+import "react-pdf/dist/Page/AnnotationLayer.css"
+import "react-pdf/dist/Page/TextLayer.css"
+import { useResizeDetector } from "react-resize-detector"
+import { z } from "zod"
+import { Button } from "./ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Input } from "./ui/input";
-import { useToast } from "./ui/use-toast";
-import SimpleBar from "simplebar-react";
-import PdfFullscreen from "./PdfFullscreen";
+} from "./ui/dropdown-menu"
+import { Input } from "./ui/input"
+import { useToast } from "./ui/use-toast"
+import SimpleBar from "simplebar-react"
+import PdfFullscreen from "./PdfFullscreen"
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 interface PdfRendererProps {
-  url: string;
+  url: string
 }
 
 const PdfRenderer = ({ url }: PdfRendererProps) => {
-  const { toast } = useToast();
-  const { width, ref } = useResizeDetector();
-  const [currPage, setCurrPage] = useState<number>(1);
-  const [numPages, setNumPages] = useState<number>();
-  const [scale, setScale] = useState<number>(1);
-  const [rotation, setRotation] = useState<number>(0);
-  const [renderedScale, setRenderedScale] = useState<number | null>(null);
+  const { toast } = useToast()
+  const { width, ref } = useResizeDetector()
+  const [currPage, setCurrPage] = useState<number>(1)
+  const [numPages, setNumPages] = useState<number>()
+  const [scale, setScale] = useState<number>(1)
+  const [rotation, setRotation] = useState<number>(0)
+  const [renderedScale, setRenderedScale] = useState<number | null>(null)
 
-  const isLoading = renderedScale !== scale ? true : false;
+  const isLoading = renderedScale !== scale ? true : false
   const CustomPageValidator = z.object({
     page: z
       .string()
       .refine((num) => Number(num) > 0 && Number(num) <= numPages!),
-  });
+  })
 
-  type TCustomPageValidator = z.infer<typeof CustomPageValidator>;
+  type TCustomPageValidator = z.infer<typeof CustomPageValidator>
 
   const {
     register,
@@ -63,10 +63,10 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
       page: "1",
     },
     resolver: zodResolver(CustomPageValidator),
-  });
+  })
   function handlePageSubmit({ page }: TCustomPageValidator) {
-    setCurrPage(Number(page));
-    setValue("page", String(page));
+    setCurrPage(Number(page))
+    setValue("page", String(page))
   }
 
   return (
@@ -77,15 +77,13 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             disabled={currPage === numPages || numPages === undefined}
             aria-label="previous-page"
             variant="ghost"
-            onClick={() =>
+            onClick={() => {
               // @ts-ignore
-              setCurrPage((prevPage) => {
-                // @ts-ignore
-                if (prevPage + 1 < numPages) return prevPage + 1;
-                setValue("page", String(currPage + 1));
-                return numPages;
-              })
-            }
+              setCurrPage((prev) =>
+                prev + 1 > numPages! ? numPages! : prev + 1
+              )
+              setValue("page", String(currPage + 1))
+            }}
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
@@ -99,7 +97,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               )}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleSubmit(handlePageSubmit)();
+                  handleSubmit(handlePageSubmit)()
                 }
               }}
             />
@@ -112,14 +110,10 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             disabled={currPage <= 1}
             aria-label="next-page"
             variant="ghost"
-            onClick={() =>
-              setCurrPage((prevPage: number) => {
-                if (prevPage - 1 > 1) return prevPage - 1;
-                setValue("page", String(currPage - 1));
-
-                return 1;
-              })
-            }
+            onClick={() => {
+              setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1))
+              setValue("page", String(currPage - 1))
+            }}
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
@@ -153,7 +147,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             <RotateCw
               className="h-4 w-4"
               onClick={() => {
-                setRotation((prev) => prev + 90);
+                setRotation((prev) => prev + 90)
               }}
             />
           </Button>
@@ -175,7 +169,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                   title: "Error Loading Pdf",
                   description: "Please try again later",
                   variant: "destructive",
-                });
+                })
               }}
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               file={url}
@@ -207,7 +201,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         </SimpleBar>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PdfRenderer;
+export default PdfRenderer
