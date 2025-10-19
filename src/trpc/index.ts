@@ -67,12 +67,29 @@ export const appRouter = router({
 
     const subscriptionPlan = await getUserSubscriptionPlan();
 
+    console.log("📊 Subscription plan data:", {
+      isSubscribed: subscriptionPlan.isSubscribed,
+      stripeCustomerId: dbUser.stripeCustomerId,
+      stripePriceId: dbUser.stripePriceId,
+      stripeSubscriptionId: dbUser.stripeSubscriptionId
+    });
+
     if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
-      const stripeSession = await stripe.billingPortal.sessions.create({
-        customer: dbUser.stripeCustomerId,
-        return_url: billingUrl,
-      });
-      return { url: stripeSession.url };
+      console.log("🏦 Creating billing portal for customer:", dbUser.stripeCustomerId);
+      try {
+        const stripeSession = await stripe.billingPortal.sessions.create({
+          customer: dbUser.stripeCustomerId,
+          return_url: billingUrl,
+        });
+        console.log("✅ Billing portal created:", stripeSession.url);
+        return { url: stripeSession.url };
+      } catch (error) {
+        console.error("❌ Billing portal creation failed:", error);
+        throw new TRPCError({ 
+          code: "INTERNAL_SERVER_ERROR", 
+          message: `Failed to create billing portal: ${error.message}` 
+        });
+      }
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
