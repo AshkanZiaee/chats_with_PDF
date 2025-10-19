@@ -37,6 +37,11 @@ export async function POST(request: Request) {
   }
 
   console.log("👤 Processing for user:", session.metadata.userId);
+  console.log("🔍 Session data:", {
+    id: session.id,
+    subscription: session.subscription,
+    customer: session.customer
+  });
 
   if (event.type === "checkout.session.completed") {
     console.log("💳 Processing checkout.session.completed");
