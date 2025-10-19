@@ -15,6 +15,9 @@ const nextConfig = {
       },
     ];
   },
+  experimental: {
+    optimizePackageImports: ['@next/font'],
+  },
   images: {
     minimumCacheTTL: 60,
     domains: [

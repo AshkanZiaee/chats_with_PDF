@@ -8,7 +8,11 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { Toast, ToastProvider } from "@/components/ui/toast";
 import "simplebar-react/dist/simplebar.min.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+});
 
 export const metadata: Metadata = constructMetadata();
 
