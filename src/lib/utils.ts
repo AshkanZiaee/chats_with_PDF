@@ -8,7 +8,14 @@ export function cn(...inputs: ClassValue[]) {
 
 export function absoluteUrl(path: string) {
   if (typeof window !== "undefined") return path;
+  
+  // Check for Vercel deployment
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}${path}`;
+  
+  // Check for custom domain or other deployment URLs
+  if (process.env.NEXT_PUBLIC_APP_URL) return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
+  
+  // Fallback to localhost for development
   return `http://localhost:${process.env.PORT ?? 3000}${path}`;
 }
 
