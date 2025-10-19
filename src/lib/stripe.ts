@@ -45,14 +45,22 @@ export async function getUserSubscriptionPlan() {
 
   const plan = isSubscribed
     ? PLANS.find((plan) => plan.price.priceIds.test === dbUser.stripePriceId)
-    : null;
+    : PLANS[0]; // Return Free plan when not subscribed
 
   let isCanceled = false;
   if (isSubscribed && dbUser.stripeSubscriptionId) {
-    const stripePlan = await stripe.subscriptions.retrieve(
-      dbUser.stripeSubscriptionId
-    );
-    isCanceled = stripePlan.cancel_at_period_end;
+    try {
+      console.log("Calling Stripe API to retrieve subscription:", dbUser.stripeSubscriptionId);
+      const stripePlan = await stripe.subscriptions.retrieve(
+        dbUser.stripeSubscriptionId
+      );
+      console.log("Stripe subscription retrieved successfully:", stripePlan.id);
+      isCanceled = stripePlan.cancel_at_period_end;
+    } catch (error) {
+      console.error("Failed to retrieve Stripe subscription:", error);
+      // If Stripe API fails, assume not canceled
+      isCanceled = false;
+    }
   }
 
   return {
