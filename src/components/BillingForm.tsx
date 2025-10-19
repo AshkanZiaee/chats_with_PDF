@@ -19,18 +19,27 @@ interface BillingProps {
 }
 const BillingForm = ({ subscriptionPlan }: BillingProps) => {
   const { toast } = useToast();
+  
   // @ts-ignore
   const { mutate: createStripeSession, isLoading } =
     trpc.createStripeSession.useMutation({
       onSuccess: ({ url }) => {
-        if (url) window.localStorage.href = url;
-        if (!url) {
+        if (url) {
+          window.location.href = url;
+        } else {
           toast({
             title: "There was a problem...",
             description: "Please try again in a moment",
             variant: "destructive",
           });
         }
+      },
+      onError: (error) => {
+        toast({
+          title: "Error creating payment session",
+          description: error.message || "Please try again in a moment",
+          variant: "destructive",
+        });
       },
     });
   return (

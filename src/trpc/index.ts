@@ -53,7 +53,6 @@ export const appRouter = router({
 
   createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
     const { userId } = ctx;
-
     const billingUrl = absoluteUrl("/dashboard/billing");
 
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -73,7 +72,6 @@ export const appRouter = router({
         customer: dbUser.stripeCustomerId,
         return_url: billingUrl,
       });
-
       return { url: stripeSession.url };
     }
 

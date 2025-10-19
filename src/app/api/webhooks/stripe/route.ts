@@ -7,6 +7,8 @@ export async function POST(request: Request) {
   const body = await request.text();
   const signature = headers().get("Stripe-Signature") ?? "";
 
+  console.log("🔵 Stripe webhook received:", new Date().toISOString());
+
   let event: Stripe.Event;
 
   try {
@@ -16,21 +18,28 @@ export async function POST(request: Request) {
       process.env.STRIPE_WEBHOOK_SECRET || ""
     );
   } catch (err) {
+    console.error("❌ Webhook signature verification failed:", err);
     return new Response(
       `Webhook Error: ${err instanceof Error ? err.message : "Unknown Error"}`,
       { status: 400 }
     );
   }
 
+  console.log("🔵 Processing webhook event:", event.type);
+  
   const session = event.data.object as Stripe.Checkout.Session;
 
   if (!session?.metadata?.userId) {
+    console.log("⚠️ No userId in session metadata");
     return new Response(null, {
       status: 200,
     });
   }
 
+  console.log("👤 Processing for user:", session.metadata.userId);
+
   if (event.type === "checkout.session.completed") {
+    console.log("💳 Processing checkout.session.completed");
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
@@ -48,6 +57,7 @@ export async function POST(request: Request) {
         ),
       },
     });
+    console.log("✅ User upgraded to Pro successfully");
   }
 
   if (event.type === "invoice.payment_succeeded") {
