@@ -85,9 +85,10 @@ export const appRouter = router({
         return { url: stripeSession.url };
       } catch (error) {
         console.error("❌ Billing portal creation failed:", error);
-        throw new TRPCError({ 
-          code: "INTERNAL_SERVER_ERROR", 
-          message: `Failed to create billing portal: ${error.message}` 
+        const message = error instanceof Error ? error.message : String(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Failed to create billing portal: ${message}`
         });
       }
     }
